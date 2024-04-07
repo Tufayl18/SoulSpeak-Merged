@@ -44,10 +44,10 @@ const UserDashboard = () => {
           </button>
         </div>
         <div className="w-[506px] bg-gray-100 h-[501px] overflow-hidden shrink-0 flex flex-col items-center justify-start">
-        <ChatEngine
+        <ChatEngine style='color:black'
 			projectID='7b3c3a98-d74a-4194-bf8b-9234aae704ca'
-			userName='Manas'
-			userSecret='messi'
+			userName= 'Aarya'/*Manas Aarya Adam Tufayl Aditi Soul*/ 
+			userSecret= 'project' /* messi project socceer aditi tufayl watch*/
 		/>
 
         </div>
