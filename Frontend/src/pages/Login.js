@@ -1,6 +1,53 @@
 import Navbar from "../components/Navbar";
+import { useState } from "react";
+import React from 'react'
+
 
 const Login = () => {
+
+  const [identity, setidentity] = useState('doctor')
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+
+
+  const btnAction = async (e) => {
+    e.preventDefault()
+    const URL = "http://localhost:5000/api/login"
+    try{
+      const response = await fetch(URL, {
+        method:"POST",
+        credentials: "include",
+        headers:  {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+          },
+        body: JSON.stringify({identity, email, password})
+      })
+  
+      const data = await response.json()
+
+      if(data.status == 200 ){
+        alert(data.msg)
+        if(identity == "doctor"){
+          window.location.href="http://localhost:3000/DoctorDashboard"
+        }
+        else{
+          window.location.href="http://localhost:3000/UserDashboard"
+        }
+      }
+      else{
+        alert(data.msg)
+      }
+    }
+    
+    catch(e){
+      console.log("Error", e)
+    }
+  }
+
+
+
+
   return (
     <div className="w-full relative [background:linear-gradient(121.5deg,_#eed8ec_23.42%,_#a8edea)] h-[750px] overflow-hidden text-center text-5xl text-rosybrown font-inter">
       <Navbar logIn="Log In" />
@@ -18,17 +65,19 @@ const Login = () => {
             <b className="w-[190px] relative flex items-center justify-center h-[30px] shrink-0">
               Welcome back !
             </b>
-            <select className="px-[20px] w-[301px] relative rounded-31xl bg-white h-[47px] overflow-hidden shrink-0" >
+            <select value = {identity}  onChange={(e)=> setidentity(e.target.value)} className="px-[20px] w-[301px] relative rounded-31xl bg-white h-[47px] overflow-hidden shrink-0" >
               <option value="doctor">Doctor</option>
               <option value="user">User</option>
               </select>
-            <input placeholder="Enter Your Registered Email" type="email" className="px-[20px] w-[301px] relative rounded-31xl bg-white h-[47px] overflow-hidden shrink-0" />
-            <input placeholder="Enter Your Passsword"type="password" className="px-[20px] w-[301px] relative rounded-31xl bg-white h-[47px] overflow-hidden shrink-0" />
-            <button className="cursor-pointer [border:none] py-[11px] px-[43px] bg-rosybrown rounded-21xl overflow-hidden flex flex-row items-center justify-center">
+            <input value = {email}  onChange={(e)=> setEmail(e.target.value)} placeholder="Enter Your Registered Email" type="email" className="px-[20px] w-[301px] relative rounded-31xl bg-white h-[47px] overflow-hidden shrink-0" />
+            <input value = {password} onChange={(e)=> setPassword(e.target.value)}  placeholder="Enter Your Passsword"type="password" className="px-[20px] w-[301px] relative rounded-31xl bg-white h-[47px] overflow-hidden shrink-0" />
+            
+            <button onClick={btnAction} className="cursor-pointer [border:none] py-[11px] px-[43px] bg-rosybrown rounded-21xl overflow-hidden flex flex-row items-center justify-center">
               <b className="relative text-xl font-inter text-plum text-center">
                 Log In
               </b>
             </button>
+
           </div>
         </div>
       </div>
