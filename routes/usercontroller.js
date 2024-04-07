@@ -6,7 +6,7 @@ const {registerUser,registerDoctor, login , sendMail} = require('../services/fun
 const {authenticateUser, authenticateDoctor} = require('../middleware/authenticate');
 const { DOCTOR, USER } = require('../model/usermodel');
 
-router.get("/", (req,res) => {
+router.get("/", (req, res) => {
     res.send("Hello Router")
 })
 
@@ -56,7 +56,7 @@ router.get("/myPatientProfile", authenticateDoctor, async(req, res) => {
         const patientProfiles = await USER.find({ _id: { $in: req.rootUser.patients } });
 
         // Display the fetched patient profiles
-        res.status(200).json({patientProfiles:patientProfiles});
+        res.status(200).json({patientProfiles:patientProfiles,  Doctor:req.rootUser});
     } catch (error) {
         console.error("Error fetching patient profiles:", error);
     }
@@ -72,8 +72,14 @@ const oAuth2Client = new google.auth.OAuth2(CLIENT_ID,CLIENT_SECRET, REDIRECT_UR
 oAuth2Client.setCredentials({refresh_token: REFRESH_TOKEN})
 
 /*Oauth2*/ 
-
-router.post("/sendMail",authenticateDoctor, async(req,res) => {
+router.get("/sendMail/:email", authenticateDoctor, async(req,res) => {
+  const email = req.params.email
+  const userID = await USER.findOne({email:email})
+  console.log("User", userID)
+  console.log(`Email ${email}`)
+  res.status(200).json({userID:userID, rootUser:req.rootUser})
+} )
+router.post("/sendMail", async(req,res) => {
 
     const {subject, negetive_comms, positive_comms, comments} = req.body
     const to_mail = req.params.email
@@ -128,4 +134,33 @@ router.post("/sendMail",authenticateDoctor, async(req,res) => {
     }
 })
 
+router.post("/weeklyJournal", authenticateUser, async(req, res) => {
+    const {q1, q2, q3, q4, q5, q6, q7} = req.body
+    if(!q1 || !q2 || !q3 || !q4 || !q5 || !q6 || !q7){
+        return res.status(400).json({msg: "Please fill all fields"})
+    }
+    try{
+
+    const user = await USER.find({_id : req.rootUser._id})
+
+    if(!user){
+        return res.status(400).json({msg: "Unauthorized"})
+    }
+
+    const addJournal = new USER({q1: q1, q2: q2, q3: q3, q4: q4, q5:q5, q6:q6, q7:q7})
+    if(!addJournal){
+        res.json({status:500 ,msg:"Error creating Doctor "})
+    }
+    res.json({status:201, msg:"Journal added succesfully"})
+}catch(err){
+    console.log("Error at journal", err)
+}
+})
+
+router.get("/userDashboard", authenticateUser, async(req, res) => {
+    const user = req.rootUser
+    //const myDoctor = await DOCTOR.find({ _id: { $in: user.preferred_therapist } })
+    const myDoctor = await DOCTOR.findById({_id: user.preferred_therapist})
+    res.status(200).json({Doctor:myDoctor})
+})
 module.exports = router;
