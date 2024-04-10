@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const nodemailer = require("nodemailer");
 const {google} = require('googleapis')
-const {registerUser,registerDoctor, login , sendMail} = require('../services/functions')
+const {registerUser,registerDoctor, login , sendMail, gemini} = require('../services/functions')
 const {authenticateUser, authenticateDoctor} = require('../middleware/authenticate');
 const { DOCTOR, USER } = require('../model/usermodel');
 
@@ -65,6 +65,8 @@ router.get("/myPatientProfile", authenticateDoctor, async(req, res) => {
         console.error("Error fetching patient profiles:", error);
     }
 })
+
+router.post("/gemini", gemini)
 
 /*Oauth2*/ 
 const CLIENT_ID = process.env.CLIENT_ID
