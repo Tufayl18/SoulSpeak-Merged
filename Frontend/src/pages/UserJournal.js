@@ -83,6 +83,43 @@ const UserJournal = () => {
     }
   }
 
+  const getGemini = async () => {
+    try {
+        const geminiUrl = "http://localhost:5000/api/gemini";
+        const { feelings, gratitude, contributingFactors, exerciseSchedule, actionsToImprove, insights, helpReceived } = user;
+
+        const response = await fetch(geminiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                feelings,
+                gratitude,
+                contributingFactors,
+                exerciseSchedule,
+                actionsToImprove,
+                insights,
+                helpReceived
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch data from Gemini');
+        }
+
+        const data = await response.json();
+        console.log(data); // Log the response data
+        // Render the response data as needed
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+  const postDataAndGemini = async () => {
+    await postData();
+    await getGemini();
+  }
 
 
 
@@ -291,7 +328,7 @@ const UserJournal = () => {
               </div>
             </div>
           </div>
-          <button onClick={()=> postData } className="cursor-pointer [border:none] py-[11px] px-[43px] bg-rosybrown w-28 rounded-21xl overflow-hidden flex flex-row items-center justify-center box-border">
+          <button onClick={()=> postDataAndGemini } className="cursor-pointer [border:none] py-[11px] px-[43px] bg-rosybrown w-28 rounded-21xl overflow-hidden flex flex-row items-center justify-center box-border">
             <b className="relative text-xl font-inter text-plum text-center">
               Submit
             </b>
