@@ -24,5 +24,3 @@ SoulSpeak is a mental well-being app designed to provide a supportive platform f
 
 *Join us and Speak Up to heal together!*
 
-*Terms of Service and Privacy Policy:*
-Please read our Terms of Service and Privacy Policy for more information on how we collect, use, and protect your data.
